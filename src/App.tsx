@@ -4,13 +4,20 @@ import usersFromServer from './api/users';
 import todosFromServer from './api/todos';
 import { TodoList } from './components/TodoList';
 import { useState } from 'react';
+import { TodoWithUser } from './features/types';
 
 export const App = () => {
   const [title, setTitle] = useState('');
   const [titleError, setTitleError] = useState(false);
   const [userId, setUserId] = useState(0);
   const [userError, setUserError] = useState(false);
-  const [todos, setTodos] = useState(todosFromServer);
+
+  const todosWithUsers: TodoWithUser[] = todosFromServer.map(todo => ({
+    ...todo,
+    user: usersFromServer.find(user => user.id === todo.userId),
+  }));
+
+  const [todos, setTodos] = useState(todosWithUsers);
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
@@ -60,6 +67,7 @@ export const App = () => {
         .trim()
         .replace(/[^A-Za-zА-Еа-еЖ-Щж-щЬьІіЇїЄєҐґЮюЯя0-9\s]/g, ''),
       completed: false,
+      user: usersFromServer.find(user => user.id === userId),
     };
 
     setTodos(currTodos => [...currTodos, newTodo]);
@@ -109,7 +117,7 @@ export const App = () => {
         </button>
       </form>
 
-      <TodoList todos={todos} users={usersFromServer} />
+      <TodoList todos={todos} />
     </div>
   );
 };
