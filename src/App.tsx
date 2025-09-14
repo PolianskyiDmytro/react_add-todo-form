@@ -36,10 +36,13 @@ export const App = () => {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (
-      title.trim().replace(/[^A-Za-zА-Еа-еЖ-Щж-щЬьІіЇїЄєҐґЮюЯя0-9\s]/g, '')
-        .length === 0
-    ) {
+    const editedTitle = title
+      .trim()
+      .replace(/[^A-Za-zА-Еа-еЖ-Щж-щЬьІіЇїЄєҐґЮюЯя0-9\s]/g, '');
+
+    setTitle(editedTitle);
+
+    if (title.length === 0) {
       setTitleError(true);
     }
 
@@ -47,11 +50,7 @@ export const App = () => {
       setUserError(true);
     }
 
-    if (
-      title.trim().replace(/[^A-Za-zА-Еа-еЖ-Щж-щЬьІіЇїЄєҐґЮюЯя0-9\s]/g, '')
-        .length === 0 ||
-      userId === 0
-    ) {
+    if (title.length === 0 || userId === 0) {
       return;
     }
 
@@ -63,9 +62,7 @@ export const App = () => {
     const newTodo = {
       userId,
       id: maxId + 1,
-      title: title
-        .trim()
-        .replace(/[^A-Za-zА-Еа-еЖ-Щж-щЬьІіЇїЄєҐґЮюЯя0-9\s]/g, ''),
+      title,
       completed: false,
       user: usersFromServer.find(user => user.id === userId),
     };
@@ -83,7 +80,9 @@ export const App = () => {
 
       <form action="/api/todos" method="POST" onSubmit={handleSubmit}>
         <div className="field">
+          <label htmlFor="titleInput">Todo Title:</label>
           <input
+            id="titleInput"
             type="text"
             data-cy="titleInput"
             value={title}
@@ -94,7 +93,9 @@ export const App = () => {
         </div>
 
         <div className="field">
+          <label htmlFor="userSelect">User:</label>
           <select
+            id="userSelect"
             data-cy="userSelect"
             value={userId}
             onChange={handleUserChange}
