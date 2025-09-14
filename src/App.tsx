@@ -20,7 +20,12 @@ export const App = () => {
   const [todos, setTodos] = useState(todosWithUsers);
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(event.target.value);
+    setTitle(
+      event.target.value.replace(
+        /[^A-Za-zА-Еа-еЖ-Щж-щЬьІіЇїЄєҐґЮюЯя0-9\s]/g,
+        '',
+      ),
+    );
     if (titleError) {
       setTitleError(false);
     }
@@ -35,14 +40,9 @@ export const App = () => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+    const trimmedTitle = title.trim();
 
-    const editedTitle = title
-      .trim()
-      .replace(/[^A-Za-zА-Еа-еЖ-Щж-щЬьІіЇїЄєҐґЮюЯя0-9\s]/g, '');
-
-    setTitle(editedTitle);
-
-    if (title.length === 0) {
+    if (trimmedTitle.length === 0) {
       setTitleError(true);
     }
 
@@ -50,7 +50,7 @@ export const App = () => {
       setUserError(true);
     }
 
-    if (title.length === 0 || userId === 0) {
+    if (trimmedTitle.length === 0 || userId === 0) {
       return;
     }
 
@@ -62,7 +62,7 @@ export const App = () => {
     const newTodo = {
       userId,
       id: maxId + 1,
-      title,
+      title: trimmedTitle,
       completed: false,
       user: usersFromServer.find(user => user.id === userId),
     };
